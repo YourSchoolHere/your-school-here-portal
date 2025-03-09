@@ -1,0 +1,60 @@
+{
+  "editor-configs": {
+    "js": {
+      "language": "javascript",
+      "uri": "main.js",
+      "value": ""
+    },
+    "html": {
+      "language": "html",
+      "uri": "main.html",
+      "value": ""
+    },
+    "css": {
+      "language": "css",
+      "uri": "main.css",
+      "value": ""
+    },
+    "java": {
+      "language": "java",
+      "uri": "Main.java",
+      "value": ""
+    },
+    "c#": {
+      "language": "csharp",
+      "uri": "main.cs",
+      "value": ""
+    },
+    "python": {
+      "language": "python",
+      "uri": "main.py",
+      "value": ""
+    }
+  },
+  "supported-languages": [
+    {
+      "name": "JavaScript",
+      "value": "js"
+    },
+    {
+      "name": "HTML",
+      "value": "html"
+    },
+    {
+      "name": "CSS",
+      "value": "css"
+    },
+    {
+      "name": "Java",
+      "value": "java"
+    },
+    {
+      "name": "C#",
+      "value": "c#"
+    },
+    {
+      "name": "Python",
+      "value": "python"
+    }
+  ]
+}
