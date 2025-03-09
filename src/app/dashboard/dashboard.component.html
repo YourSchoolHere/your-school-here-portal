@@ -1,0 +1,36 @@
+<div class="screen">
+  <div class="navbar">
+    <div class="logo">YourSchoolHere | {{schoolInfo['schoolName']}}</div>
+    <div class="links">
+      <div class="link">Profile</div>
+      <div class="link" (click)="logout()">Logout</div>
+    </div>
+  </div>
+  <div *ngIf="selectedCourse==''; else courseSection" style="display: flex;">
+    <div style="flex-grow: 4; display: flex;">
+      <div class="course-card" *ngFor="let course of courses" (click)="selectCourse(course['class_id'])">
+        <div>{{course['name']}} {{course["course_id"]}}</div>
+      </div>
+    </div>
+    <div style="flex-grow: 1;">General Announcements</div>
+  </div>
+  <ng-template #courseSection>
+    <div>
+      <div>Class: {{user.course.class_id}}</div>
+      <div style="display: flex;">
+        <div style="width: 20%;">
+          <div class="tab-links" (click)="gotoSection('contents')">Contents</div>
+          <div class="tab-links" (click)="gotoSection('quizzes')">Quizzes</div>
+        </div>
+        <div style="width: 80%;">
+          <div *ngIf="subSection=='contents'">
+            Contents
+          </div>
+          <div *ngIf="subSection=='quizzes'">
+            <app-quizzes></app-quizzes>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

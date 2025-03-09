@@ -1,0 +1,47 @@
+.header {
+  padding: 10px;
+  width: calc(100% - 20px);
+  display: flex;
+  justify-content: space-between;
+}
+
+.start-create-quiz-button {
+  cursor: pointer;
+}
+
+.quiz-card {
+  border-radius: 7px;
+  background-color: orange;
+  margin-bottom: 8px;
+  & .title {
+    font-weight: bold;
+    cursor: pointer;
+  }
+}
+
+.quiz-form {
+  padding: 0 10px;
+  & > div {
+    margin: 10px 0;
+  }
+  .qs-type, .qs-marks, .qs-title {
+    margin: 8px 0;
+  }
+  .qs-type {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    & > select {
+      display: block;
+    }
+  }
+  .qs-add-option {
+    margin-bottom: 5px;
+  }
+  .qs-option {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

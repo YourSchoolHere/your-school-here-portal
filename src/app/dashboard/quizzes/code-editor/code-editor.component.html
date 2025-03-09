@@ -1,0 +1,9 @@
+
+<ng-container *ngIf="modelOpts && languages">
+  <select *ngIf="!isStudentMode" [value]="codeLanguage" (change)="langChanged($event)">
+    <option *ngFor="let optn of languages" [value]="optn.value">{{optn.name}}</option>
+  </select>
+  <div *ngIf="isStudentMode" style="margin-bottom: 3px;">Language: {{getLangName()}}</div>
+
+  <ngs-code-editor theme="vs-dark" [codeModel]="model" [options]="options" (valueChanged)="onCodeChanged($event)"></ngs-code-editor>
+</ng-container>
