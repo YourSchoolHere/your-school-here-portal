@@ -42,6 +42,15 @@ button.danger {
   color: white;
 }
 
+button.no-bkgrnd {
+  background-color: rgba(0, 0, 0, 0);
+  padding: 2px 3.5px 4px;
+  color: #2e8cbf;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+}
+
 input:not([type]), input[type=text] {
   height: 24px;
   padding: 4px;
