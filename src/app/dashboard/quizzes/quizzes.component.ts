@@ -27,6 +27,10 @@ export class QuizzesComponent {
   public timeLimit = "30";
   public maxAttempts = "1";
 
+  public timeLeft = "";
+  public timeUpdateInterval: any;
+  public timeLeftTimeout: any;
+
   constructor(private http: HttpService, public user: UserService) {
     this.refreshQuizList();
   }
@@ -169,12 +173,12 @@ export class QuizzesComponent {
     if(!quizJSON) return;
     if(!this.quizTitle) return;
     let time_limit = this.timeLimit.trim();
-    if(isNaN(Number(time_limit)) || !/^[1-9][0-9]*$/.test(time_limit) || Number(time_limit)<15) return;
+    if(isNaN(Number(time_limit)) || !/^[1-9][0-9]*$/.test(time_limit)) return;
     let max_attempts = this.maxAttempts.trim();
     if(isNaN(Number(max_attempts)) || !["1","2","3","4","5"].includes(max_attempts)) return;
     let now = Date.now(), start_ts = this.canAttemptRightNow ? now : this.startDt.getTime(), end_ts = this.endDt.getTime();
     if(start_ts < now) return;
-    if(end_ts - start_ts < 1000*15) return;
+    if(end_ts - start_ts < 1000*60*15) return;
     this.http.post(`/create-new-quiz?class_id=${this.user.course.class_id}`, {
       title: this.quizTitle,
       json: quizJSON,
@@ -226,6 +230,25 @@ export class QuizzesComponent {
       }
       this.questions.push(res);
     });
+    if (this.user.mode == "student") {
+      let quizEndTime = Date.now() + 1000*60*Number(this.timeLimit);
+      this.timeLeftTimeout = setTimeout(() => {
+        if(this.timeLeftTimeout) {
+          this.timeLeft = "Time's up!";
+          clearTimeout(this.timeLeftTimeout);
+          this.timeLeftTimeout = null;
+          this.submitQuiz();
+        }
+      }, 1000*60*Number(this.timeLimit));
+      this.timeUpdateInterval = setInterval(() => {
+        let seconds = Math.floor((quizEndTime - Date.now())/1000);
+        let hrs = (Math.floor(seconds/3600)/100).toFixed(2).split(".")[1];
+        seconds %= 3600;
+        let mins = (Math.floor(seconds/60)/100).toFixed(2).split(".")[1];
+        seconds %= 60;
+        this.timeLeft = `${hrs}:${mins}:${(seconds/100).toFixed(2).split(".")[1]}`;
+      }, 1000);
+    }
     this.creatingNewQuizNow = true;
   }
 
@@ -235,12 +258,12 @@ export class QuizzesComponent {
     if(!quizJSON) return;
     if(!this.quizTitle) return;
     let time_limit = this.timeLimit.trim();
-    if(isNaN(Number(time_limit)) || !/^[1-9][0-9]*$/.test(time_limit) || Number(time_limit)<15) return;
+    if(isNaN(Number(time_limit)) || !/^[1-9][0-9]*$/.test(time_limit)) return;
     let max_attempts = this.maxAttempts.trim();
     if(isNaN(Number(max_attempts)) || !["1","2","3","4","5"].includes(max_attempts)) return;
     let now = Date.now(), start_ts = this.canAttemptRightNow ? now : this.startDt.getTime(), end_ts = this.endDt.getTime();
     if(start_ts < now) return;
-    if(end_ts - start_ts < 1000*15) return;
+    if(end_ts - start_ts < 1000*60*15) return;
     this.http.post(`/update-quiz?class_id=${this.user.course.class_id}&quiz_id=${this.quiz_id}`, {
       title: this.quizTitle,
       json: quizJSON,
@@ -257,6 +280,14 @@ export class QuizzesComponent {
   }
 
   submitQuiz() {
+    if(this.timeUpdateInterval) {
+      clearInterval(this.timeUpdateInterval);
+      this.timeUpdateInterval = null;
+    }
+    if(this.timeLeftTimeout) {
+      clearTimeout(this.timeLeftTimeout);
+      this.timeLeftTimeout = null;
+    }
     let quiz = this.quizzes.filter(q => q['quiz_id'] == this.quiz_id)[0];
     let quizJSON = {...quiz['json']};
     let totalMarks = this.questions.reduce((accm, obj, idx) => {
@@ -282,6 +313,7 @@ export class QuizzesComponent {
     }, {headers: {token: window.localStorage.getItem("token") || ""}})
     .then((res:any) => {
       this.creatingNewQuizNow = false;
+      this.timeLeft = "";
       this.refreshQuizList();
     })
     .catch(console.warn);

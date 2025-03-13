@@ -1,17 +1,23 @@
 <div class="full-width-height">
   <div class="header">
-    <div>Quizzes</div>
+    <div><span *ngIf="user.mode == 'teacher'">Quizzes</span></div>
     <div *ngIf="user.mode=='teacher'">
-      <div *ngIf="!creatingNewQuizNow" class="start-create-quiz-button" (click)="startCreatingQuiz()">Create Quiz</div>
+      <button *ngIf="!creatingNewQuizNow" class="primary" (click)="startCreatingQuiz()">Create New Quiz</button>
       <div *ngIf="creatingNewQuizNow">
         View as Student&nbsp;
         <input type="checkbox" [(ngModel)]="isStudentModeActive" />
       </div>
     </div>
+    <div *ngIf="user.mode == 'student'">
+      {{timeLeft}}
+    </div>
   </div>
-  <div *ngIf="!creatingNewQuizNow; else quizForm">
+  <div *ngIf="!creatingNewQuizNow; else quizForm" class="quiz-list">
     <div *ngFor="let quiz of quizzes" class="quiz-card">
-      <div class="title" (click)="showQuiz(quiz['quiz_id'])">{{quiz.title}}</div>
+      <div class="title">{{quiz.title}}</div>
+      <div class="quiz-actions">
+        <button class="no-bkgrnd" (click)="showQuiz(quiz['quiz_id'])">{{user.mode == "teacher" ? "Edit Quiz" : "Start Quiz"}}</button>
+      </div>
     </div>
   </div>
   <ng-template #quizForm>
