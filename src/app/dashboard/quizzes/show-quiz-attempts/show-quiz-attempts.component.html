@@ -1,0 +1,11 @@
+<div>
+  <div style="padding: 10px;">{{user.mode == 'teacher' ? 'All' : 'My'}} Quiz Attempts</div>
+  <div style="padding: 0 10px;">
+    <div *ngFor="let attmpt of quizAttempts" class="quiz-card">
+      <div class="title">Title</div>
+      <div class="quiz-actions">
+        <button class="no-bkgrnd" (click)="showQuizResult(attmpt.atmpt_id)">Show attempt</button>
+      </div>
+    </div>
+  </div>
+</div>

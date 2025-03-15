@@ -9,6 +9,8 @@ const routes: Routes = [
   {path: 'dashboard/:course-id', component: DashboardComponent},
   {path: 'dashboard/:course-id/contents', component: DashboardComponent},
   {path: 'dashboard/:course-id/quizzes', component: DashboardComponent},
+  {path: 'dashboard/:course-id/quizzes/show-quiz-attempts-for/:quizId', component: DashboardComponent},
+  {path: 'dashboard/:course-id/quizzes/quiz-attempt-details/:attmptId', component: DashboardComponent},
   {path: '', redirectTo: 'login', pathMatch: 'full'},
 ];
 

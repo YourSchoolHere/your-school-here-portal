@@ -1,127 +1,136 @@
 <div class="full-width-height">
-  <div class="header">
-    <div><span *ngIf="user.mode == 'teacher'">Quizzes</span></div>
-    <div *ngIf="user.mode=='teacher'">
-      <button *ngIf="!creatingNewQuizNow" class="primary" (click)="startCreatingQuiz()">Create New Quiz</button>
-      <div *ngIf="creatingNewQuizNow">
-        View as Student&nbsp;
-        <input type="checkbox" [(ngModel)]="isStudentModeActive" />
+  <ng-container *ngIf="subSection == ''">
+    <div class="header">
+      <div><span *ngIf="user.mode == 'teacher' || !creatingNewQuizNow">Quizzes</span></div>
+      <div *ngIf="user.mode=='teacher'">
+        <button *ngIf="!creatingNewQuizNow" class="primary" (click)="startCreatingQuiz()">Create New Quiz</button>
+        <div *ngIf="creatingNewQuizNow">
+          View as Student&nbsp;
+          <input type="checkbox" [(ngModel)]="isStudentModeActive" />
+        </div>
+      </div>
+      <div *ngIf="user.mode == 'student'">
+        {{timeLeft}}
       </div>
     </div>
-    <div *ngIf="user.mode == 'student'">
-      {{timeLeft}}
-    </div>
-  </div>
-  <div *ngIf="!creatingNewQuizNow; else quizForm" class="quiz-list">
-    <div *ngFor="let quiz of quizzes" class="quiz-card">
-      <div class="title">{{quiz.title}}</div>
-      <div class="quiz-actions">
-        <button class="no-bkgrnd" (click)="showQuiz(quiz['quiz_id'])">{{user.mode == "teacher" ? "Edit Quiz" : "Start Quiz"}}</button>
+    <div *ngIf="!creatingNewQuizNow; else quizForm" class="quiz-list">
+      <div *ngFor="let quiz of quizzes" class="quiz-card">
+        <div class="title">{{quiz.title}}</div>
+        <div class="quiz-actions">
+          <button class="no-bkgrnd" (click)="showQuiz(quiz['quiz_id'])">{{user.mode == "teacher" ? "Edit Quiz" : "Start Quiz"}}</button>
+          <button class="no-bkgrnd" (click)="showAttemptsForQuiz(quiz['quiz_id'])">Show Quiz Attempts</button>
+        </div>
       </div>
     </div>
-  </div>
-  <ng-template #quizForm>
-    <div class="quiz-form">
-      <div>
-        <ng-container *ngIf="user.mode=='teacher' && !isStudentModeActive; else cannotEditQuizTitle">
-          <input class="heading-input" [(ngModel)]="quizTitle" placeholder="Enter quiz title" />
-        </ng-container>
-        <ng-template #cannotEditQuizTitle>
-          <span>{{quizTitle}}</span>
-        </ng-template>
-      </div>
-      <button *ngIf="user.mode=='teacher' && !isStudentModeActive;" (click)="addQuestion()">Add Question</button>
-      <div *ngFor="let qs of questions, let i = index">
-        <div class="qs-type">
-          <select *ngIf="user.mode=='teacher' && !isStudentModeActive" [(ngModel)]="qs.type" (ngModelChange)="changeQuestionType(i)">
-            <option value="sa">Short Answer</option>
-            <option value="la">Long Answer</option>
-            <option value="scq">Single Choice</option>
-            <option value="mcq">Multiple Choice</option>
-            <option value="code">Code Writing</option>
-            <option value="draw">Diagram</option>
-          </select>
-          <button *ngIf="user.mode=='teacher' && !isStudentModeActive" (click)="deleteQuestion(i)" class="danger"><i class="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Delete Question</button>
-        </div>
-        <div *ngIf="user.mode=='teacher' && !isStudentModeActive; else cannotEditMarks" class="qs-marks">
-          Marks:&nbsp;<input [formControl]="qs['marks']" placeholder="Enter marks for this question" />
-        </div>
-        <ng-template #cannotEditMarks>
-          <div>{{qs['marks'].value}} marks</div>
-        </ng-template>
-        <div class="qs-title">
-          <input *ngIf="user.mode=='teacher' && !isStudentModeActive; else cannotEditQuestion" type="text" [formControl]="qs.question" placeholder="Enter your question here..." />
-          <ng-template #cannotEditQuestion><span>{{qs.question.value}}</span></ng-template>
-        </div>
-        <div [ngSwitch]="qs.type">
-          <input *ngSwitchCase="'sa'" [formControl]="qs.answer" />
-          <textarea *ngSwitchCase="'la'" [formControl]="qs.answer" rows="20" cols="80"></textarea>
-          <div *ngSwitchCase="'scq'">
-            <button *ngIf="user.mode=='teacher' && !isStudentModeActive" (click)="addOption(i)" class="qs-add-option">Add option</button>
-            <div *ngFor="let optn of qs['scqOptions']; let idx = index">
-              <div class="qs-option">
-                <label style="display: block;">
-                  <input type="radio" name="{{'question'+(i+1)}}" [formControl]="qs.answer" [value]="idx" />&nbsp;
-                  <input *ngIf="user.mode=='teacher' && !isStudentModeActive; else cannotEditOption" [formControl]="optn" />
-                  <ng-template #cannotEditOption><span>{{optn.value}}</span></ng-template>
-                </label>
-                <button *ngIf="user.mode=='teacher' && !isStudentModeActive && qs['scqOptions'].length > 2" (click)="deleteOption(i, idx)" class="danger"><i class="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Delete option</button>
-              </div>
-            </div>
-            <div *ngIf="user.mode=='teacher' && !isStudentModeActive && qs['errorText']" style="color: red;">{{qs['errorText']}}</div>
-          </div>
-          <div *ngSwitchCase="'mcq'">
-            <button *ngIf="user.mode=='teacher' && !isStudentModeActive" (click)="addOption(i)" class="qs-add-option">Add option</button>
-            <div *ngFor="let optn of qs['mcqOptions']; let idx = index">
-              <div class="qs-option">
-                <label style="display: block;">
-                  <input type="checkbox" name="{{'question'+(i+1)}}" [formControl]="qs['mcqOptionsSelected'][idx]" [value]="optn.value+idx" />&nbsp;
-                  <input *ngIf="user.mode=='teacher' && !isStudentModeActive; else cannotEditOption" [formControl]="optn" />
-                  <ng-template #cannotEditOption><span>{{optn.value}}</span></ng-template>
-                </label>
-                <button *ngIf="user.mode=='teacher' && !isStudentModeActive && qs['mcqOptions'].length > 2" (click)="deleteOption(i, idx)" class="danger"><i class="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Delete option</button>
-              </div>
-            </div>
-            <div *ngIf="user.mode=='teacher' && !isStudentModeActive && qs['errorText']" style="color: red;">{{qs['errorText']}}</div>
-          </div>
-          <div *ngSwitchCase="'code'">
-            <app-code-editor [isStudentMode]="user.mode=='student' || isStudentModeActive" [codeLanguage]="qs['lang']" [code]="qs.answer.value" (notifyLangChange)="changeLangForCode($event, i)" (codeUpdate)="updateCode($event, i)"></app-code-editor>
-          </div>
-          <!-- <div *ngSwitchCase="'draw'">
-            <app-diagram></app-diagram>
-          </div> -->
-          <div *ngSwitchDefault></div>
-        </div>
-      </div>
-      <div *ngIf="user.mode=='teacher' && !isStudentModeActive">
-        Publish this quiz right now&nbsp;
-        <input type="checkbox" [(ngModel)]="canAttemptRightNow" />
-      </div>
-      <div *ngIf="user.mode=='teacher' && !isStudentModeActive && !canAttemptRightNow" >
-        <div>Starts from:</div>
+    <ng-template #quizForm>
+      <div class="quiz-form">
         <div>
-          <input [ngModel]="startDt" [owlDateTime]="dt1" (dateTimeInput)="dtChanged($event, 'start')" placeholder="Date Time">
-          <span [owlDateTimeTrigger]="dt1"><i class="fa fa-calendar"></i></span>
-          <owl-date-time #dt1></owl-date-time>
+          <ng-container *ngIf="user.mode=='teacher' && !isStudentModeActive; else cannotEditQuizTitle">
+            <input class="heading-input" [(ngModel)]="quizTitle" placeholder="Enter quiz title" />
+          </ng-container>
+          <ng-template #cannotEditQuizTitle>
+            <span>{{quizTitle}}</span>
+          </ng-template>
         </div>
-      </div>
-      <div *ngIf="user.mode=='teacher' && !isStudentModeActive" >
-        <div>Ends at:</div>
-        <div>
-          <input [ngModel]="endDt" [owlDateTime]="dt2" (dateTimeInput)="dtChanged($event, 'end')" placeholder="Date Time">
-          <span [owlDateTimeTrigger]="dt2"><i class="fa fa-calendar"></i></span>
-          <owl-date-time #dt2></owl-date-time>
+        <button *ngIf="user.mode=='teacher' && !isStudentModeActive;" (click)="addQuestion()">Add Question</button>
+        <div *ngFor="let qs of questions, let i = index">
+          <div class="qs-type">
+            <select *ngIf="user.mode=='teacher' && !isStudentModeActive" [(ngModel)]="qs.type" (ngModelChange)="changeQuestionType(i)">
+              <option value="sa">Short Answer</option>
+              <option value="la">Long Answer</option>
+              <option value="scq">Single Choice</option>
+              <option value="mcq">Multiple Choice</option>
+              <option value="code">Code Writing</option>
+              <option value="draw">Diagram</option>
+            </select>
+            <button *ngIf="user.mode=='teacher' && !isStudentModeActive" (click)="deleteQuestion(i)" class="danger"><i class="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Delete Question</button>
+          </div>
+          <div *ngIf="user.mode=='teacher' && !isStudentModeActive; else cannotEditMarks" class="qs-marks">
+            Marks:&nbsp;<input [formControl]="qs['marks']" placeholder="Enter marks for this question" />
+          </div>
+          <ng-template #cannotEditMarks>
+            <div>{{qs['marks'].value}} marks</div>
+          </ng-template>
+          <div class="qs-title">
+            <input *ngIf="user.mode=='teacher' && !isStudentModeActive; else cannotEditQuestion" type="text" [formControl]="qs.question" placeholder="Enter your question here..." />
+            <ng-template #cannotEditQuestion><span>{{qs.question.value}}</span></ng-template>
+          </div>
+          <div [ngSwitch]="qs.type">
+            <input *ngSwitchCase="'sa'" [formControl]="qs.answer" />
+            <textarea *ngSwitchCase="'la'" [formControl]="qs.answer" rows="20" cols="80"></textarea>
+            <div *ngSwitchCase="'scq'">
+              <button *ngIf="user.mode=='teacher' && !isStudentModeActive" (click)="addOption(i)" class="qs-add-option">Add option</button>
+              <div *ngFor="let optn of qs['scqOptions']; let idx = index">
+                <div class="qs-option">
+                  <label style="display: block;">
+                    <input type="radio" name="{{'question'+(i+1)}}" [formControl]="qs.answer" [value]="idx" />&nbsp;
+                    <input *ngIf="user.mode=='teacher' && !isStudentModeActive; else cannotEditOption" [formControl]="optn" />
+                    <ng-template #cannotEditOption><span>{{optn.value}}</span></ng-template>
+                  </label>
+                  <button *ngIf="user.mode=='teacher' && !isStudentModeActive && qs['scqOptions'].length > 2" (click)="deleteOption(i, idx)" class="danger"><i class="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Delete option</button>
+                </div>
+              </div>
+              <div *ngIf="user.mode=='teacher' && !isStudentModeActive && qs['errorText']" style="color: red;">{{qs['errorText']}}</div>
+            </div>
+            <div *ngSwitchCase="'mcq'">
+              <button *ngIf="user.mode=='teacher' && !isStudentModeActive" (click)="addOption(i)" class="qs-add-option">Add option</button>
+              <div *ngFor="let optn of qs['mcqOptions']; let idx = index">
+                <div class="qs-option">
+                  <label style="display: block;">
+                    <input type="checkbox" name="{{'question'+(i+1)}}" [formControl]="qs['mcqOptionsSelected'][idx]" [value]="optn.value+idx" />&nbsp;
+                    <input *ngIf="user.mode=='teacher' && !isStudentModeActive; else cannotEditOption" [formControl]="optn" />
+                    <ng-template #cannotEditOption><span>{{optn.value}}</span></ng-template>
+                  </label>
+                  <button *ngIf="user.mode=='teacher' && !isStudentModeActive && qs['mcqOptions'].length > 2" (click)="deleteOption(i, idx)" class="danger"><i class="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Delete option</button>
+                </div>
+              </div>
+              <div *ngIf="user.mode=='teacher' && !isStudentModeActive && qs['errorText']" style="color: red;">{{qs['errorText']}}</div>
+            </div>
+            <div *ngSwitchCase="'code'">
+              <app-code-editor [isStudentMode]="user.mode=='student' || isStudentModeActive" [codeLanguage]="qs['lang']" [code]="qs.answer.value" (notifyLangChange)="changeLangForCode($event, i)" (codeUpdate)="updateCode($event, i)"></app-code-editor>
+            </div>
+            <!-- <div *ngSwitchCase="'draw'">
+              <app-diagram></app-diagram>
+            </div> -->
+            <div *ngSwitchDefault></div>
+          </div>
         </div>
+        <div *ngIf="user.mode=='teacher' && !isStudentModeActive">
+          Publish this quiz right now&nbsp;
+          <input type="checkbox" [(ngModel)]="canAttemptRightNow" />
+        </div>
+        <div *ngIf="user.mode=='teacher' && !isStudentModeActive && !canAttemptRightNow" >
+          <div>Starts from:</div>
+          <div>
+            <input [ngModel]="startDt" [owlDateTime]="dt1" (dateTimeInput)="dtChanged($event, 'start')" placeholder="Date Time">
+            <span [owlDateTimeTrigger]="dt1"><i class="fa fa-calendar"></i></span>
+            <owl-date-time #dt1></owl-date-time>
+          </div>
+        </div>
+        <div *ngIf="user.mode=='teacher' && !isStudentModeActive" >
+          <div>Ends at:</div>
+          <div>
+            <input [ngModel]="endDt" [owlDateTime]="dt2" (dateTimeInput)="dtChanged($event, 'end')" placeholder="Date Time">
+            <span [owlDateTimeTrigger]="dt2"><i class="fa fa-calendar"></i></span>
+            <owl-date-time #dt2></owl-date-time>
+          </div>
+        </div>
+        <div *ngIf="user.mode=='teacher' && !isStudentModeActive">
+          Time Limit:&nbsp;
+          <input [(ngModel)]="timeLimit" />
+          &nbsp;(in minutes)
+        </div>
+        <div *ngIf="user.mode=='teacher' && !isStudentModeActive">
+          Maximum number of attempts:&nbsp;<input [(ngModel)]="maxAttempts" />
+        </div>
+        <button (click)="user.mode=='student' ? submitQuiz() : (quiz_id==-1 ? createQuiz() : updateQuiz())" class="primary">{{user.mode=='student' ? "Submit Quiz" : (quiz_id==-1 ? "Create Quiz" : "Update Quiz")}}</button>
       </div>
-      <div *ngIf="user.mode=='teacher' && !isStudentModeActive">
-        Time Limit:&nbsp;
-        <input [(ngModel)]="timeLimit" />
-        &nbsp;(in minutes)
-      </div>
-      <div *ngIf="user.mode=='teacher' && !isStudentModeActive">
-        Maximum number of attempts:&nbsp;<input [(ngModel)]="maxAttempts" />
-      </div>
-      <button (click)="user.mode=='student' ? submitQuiz() : (quiz_id==-1 ? createQuiz() : updateQuiz())" class="primary">{{user.mode=='student' ? "Submit Quiz" : (quiz_id==-1 ? "Create Quiz" : "Update Quiz")}}</button>
-    </div>
-  </ng-template>
+    </ng-template>
+  </ng-container>
+  <ng-container *ngIf="subSection == 'showQuizAttempts'">
+    <app-show-quiz-attempts [quizId]="quiz_id"></app-show-quiz-attempts>
+  </ng-container>
+  <ng-container *ngIf="subSection == 'showQuizAttemptDetails'">
+    <app-evaluate-quiz [atmptId]="atmptId"></app-evaluate-quiz>
+  </ng-container>
 </div>

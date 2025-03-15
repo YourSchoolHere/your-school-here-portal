@@ -1,0 +1,35 @@
+.qs-card {
+  margin: 10px 0;
+  padding: 0 10px;
+}
+
+.qs-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.optn-container {
+  display: block;
+  padding: 5px;
+  &:not(:last-of-type) {
+    margin-bottom: 5px;
+  }
+  &.right-selected {
+    outline: 1px solid #179c20;
+    background-color: rgba($color: #179c20, $alpha: 0.5);
+  }
+  &.wrong-selected {
+    outline: 1px solid #c91010;
+    background-color: rgba($color: #c91010, $alpha: 0.5);
+  }
+  &.right-not-selected {
+    outline: 1px solid #798f0a;
+    background-color: rgba($color: #798f0a, $alpha: 0.5);
+  }
+}
+
+.marks {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}

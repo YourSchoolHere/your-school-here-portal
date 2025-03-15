@@ -3,24 +3,11 @@
   width: calc(100% - 20px);
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .quiz-list {
   padding: 10px;
-}
-
-.quiz-card {
-  border-radius: 7px;
-  padding: 10px;
-  outline: 1px solid #2e8cbf;
-  margin-bottom: 8px;
-  .quiz-actions {
-    display: flex;
-    margin-top: 10px;
-    & > button:not(:first-of-type) {
-      margin-left: 7px;
-    }
-  }
 }
 
 .quiz-form {
