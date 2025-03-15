@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { HttpService } from '../../services/http.service';
 import { UserService } from '../../services/user.service';
 
-declare type QuestionType = "sa" | "la" | "scq" | "mcq" | "code" | "draw"
+declare type QuestionType = "sa" | "la" | "scq" | "mcq" | "code" | "draw";
 
 @Component({
   selector: 'app-quizzes',
@@ -12,6 +13,7 @@ declare type QuestionType = "sa" | "la" | "scq" | "mcq" | "code" | "draw"
   styleUrl: './quizzes.component.scss'
 })
 export class QuizzesComponent {
+  public subSection = "";
   public creatingNewQuizNow = false;
   public isStudentModeActive = false;
   public quiz_id = -1;
@@ -20,6 +22,7 @@ export class QuizzesComponent {
   public questions: {type: QuestionType, question: FormControl, answer: FormControl, [k: string]: any}[] = [];
 
   public canAttemptRightNow = false;
+  public atmptId = -1;
 
   public startDt = new Date();
   public endDt = new Date();
@@ -31,8 +34,29 @@ export class QuizzesComponent {
   public timeUpdateInterval: any;
   public timeLeftTimeout: any;
 
-  constructor(private http: HttpService, public user: UserService) {
-    this.refreshQuizList();
+  constructor(private http: HttpService, public user: UserService, public router: Router) {
+    this.atmptId = -1;
+    if(router.url.includes("show-quiz-attempts-for")) {
+      let quiz_id = Number(router.url.split("/")[5]);
+      if(isNaN(quiz_id)) {
+        router.navigateByUrl(`/dashboard/${this.user.course.class_id}/quizzes`);
+        return;
+      }
+      this.quiz_id = quiz_id;
+      this.subSection = "showQuizAttempts";
+    }
+    else if(router.url.includes("quiz-attempt-details")) {
+      let atmptId = Number(router.url.split("/")[5]);
+      if(isNaN(atmptId)) {
+        router.navigateByUrl(`/dashboard/${this.user.course.class_id}/quizzes`);
+        return;
+      }
+      this.atmptId = atmptId;
+      this.subSection = "showQuizAttemptDetails";
+    }
+    else {
+      this.refreshQuizList();
+    }
   }
 
   dtChanged(ev: any, mode: "start" | "end") {
@@ -290,26 +314,38 @@ export class QuizzesComponent {
     }
     let quiz = this.quizzes.filter(q => q['quiz_id'] == this.quiz_id)[0];
     let quizJSON = {...quiz['json']};
-    let totalMarks = this.questions.reduce((accm, obj, idx) => {
+    let totalMarks = 0;
+    let totalMarksGained = this.questions.reduce((accm, obj, idx) => {
+      totalMarks += obj['marks'].value;
       if(obj.type == "mcq") {
         let selectedOpts = [];
+        let marksGained = 0;
         for(let i=0;i<obj["mcqOptions"].length;i++) {
-          if(obj["mcqOptionsSelected"][i].value && quiz['json'][idx].answer.includes(obj["mcqOptions"][i].value)) {
-            accm += obj['marks'].value/quiz['json'][idx].answer.length;
+          if(obj["mcqOptionsSelected"][i].value) {
+            if(quiz['json'][idx].answer.includes(obj["mcqOptions"][i].value)) {
+              accm += obj['marks'].value/quiz['json'][idx].answer.length;
+              marksGained += obj['marks'].value/quiz['json'][idx].answer.length;
+            }
             selectedOpts.push(obj["mcqOptions"][i].value)
           }
         }
+        quizJSON![idx].marksGained = marksGained;
         quizJSON![idx].submittedAnswer = [...selectedOpts];
       }
       else {
-        if(obj.answer.value == quiz['json'][idx].answer) accm += obj['marks'].value;
+        quizJSON![idx].marksGained = 0;
+        if(obj.answer.value == quiz['json'][idx].answer) {
+          accm += obj['marks'].value;
+          quizJSON![idx].marksGained = obj['marks'].value;
+        }
         quizJSON![idx].submittedAnswer = obj.answer.value;
       }
       return accm;
     }, 0);
     this.http.post(`/submit-quiz?quiz_id=${this.quiz_id}`, {
       json: quizJSON,
-      marks: totalMarks
+      marks: totalMarks,
+      marks_gained: totalMarksGained
     }, {headers: {token: window.localStorage.getItem("token") || ""}})
     .then((res:any) => {
       this.creatingNewQuizNow = false;
@@ -317,5 +353,9 @@ export class QuizzesComponent {
       this.refreshQuizList();
     })
     .catch(console.warn);
+  }
+
+  showAttemptsForQuiz(quiz_id: number) {
+    this.router.navigateByUrl(`/dashboard/${this.user.course.class_id}/quizzes/show-quiz-attempts-for/${quiz_id}`);
   }
 }

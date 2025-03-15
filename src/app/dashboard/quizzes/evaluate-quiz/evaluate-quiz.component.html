@@ -1,0 +1,45 @@
+<div>Quiz attempted by {{quizDetails.student_id}} and submitted at {{quizDetails.created_at}}</div>
+<div *ngFor="let qs of questions, let i = index" class="qs-card">
+  <div class="qs-title">Question: {{qs.question}}</div>
+  <div *ngIf="qs.type == 'sa'">
+    Answer: {{qs.submittedAnswer}}
+  </div>
+  <div *ngIf="qs.type == 'la'">
+    Answer: {{qs.submittedAnswer}}
+  </div>
+  <div *ngIf="qs.type == 'scq'">
+    <div *ngFor="let optn of qs.scqOptions; let idx = index">
+      <label class="optn-container"
+        [ngClass]="{'wrong-selected': idx == qs.submittedAnswer && idx != qs.answer,
+        'right-not-selected': idx != qs.submittedAnswer && idx == qs.answer,
+        'right-selected': idx == qs.submittedAnswer && idx == qs.answer}">
+        <input type="radio" [name]="'scq'+i" [checked]="idx == qs.submittedAnswer" disabled="disabled" />
+        <span>{{optn}}</span>
+      </label>
+    </div>
+  </div>
+  <div *ngIf="qs.type == 'mcq'">
+    <div *ngFor="let optn of qs.mcqOptions; let idx = index">
+      <label class="optn-container"
+        [ngClass]="{'wrong-selected': qs.submittedAnswer.includes(optn) && !qs.answer.includes(optn),
+        'right-not-selected': !qs.submittedAnswer.includes(optn) && qs.answer.includes(optn),
+        'right-selected': qs.submittedAnswer.includes(optn) && qs.answer.includes(optn)}">
+        <input type="checkbox" [name]="'mcq'+i" [checked]="qs.submittedAnswer.includes(optn)" disabled="disabled" />
+        <span>{{optn}}</span>
+      </label>
+    </div>
+  </div>
+  <div *ngIf="qs.type == 'code'">
+    <app-code-editor [isStudentMode]="true" [code]="qs.submittedAnswer" [codeLanguage]="qs.lang"></app-code-editor>
+  </div>
+  <div class="marks">
+    <input *ngIf="user.mode=='teacher'" style="display: block;" [formControl]="marksArray[i]" placeholder="Enter marks for this question" />
+    <div *ngIf="user.mode=='student'">Marks: {{marksArray[i].value}}</div>
+    <div style="margin: 0 7px;">/</div>
+    <div>{{qs.marks}}</div>
+  </div>
+</div>
+<div style="margin-top: 10px;">Total marks: {{getTotalMarksGained()}} / {{quizDetails.marks}}</div>
+<div *ngIf="user.mode=='teacher'" style="margin-top: 10px;">
+  <button class="primary" (click)="updateMarks()">Update Marks</button>
+</div>

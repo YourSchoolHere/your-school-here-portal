@@ -15,6 +15,8 @@ import { DiagramComponent } from './dashboard/quizzes/diagram/diagram.component'
 import { DiagramModule } from '@syncfusion/ej2-angular-diagrams';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EvaluateQuizComponent } from './dashboard/quizzes/evaluate-quiz/evaluate-quiz.component';
+import { ShowQuizAttemptsComponent } from './dashboard/quizzes/show-quiz-attempts/show-quiz-attempts.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     DashboardComponent,
     QuizzesComponent,
     CodeEditorComponent,
-    DiagramComponent
+    DiagramComponent,
+    EvaluateQuizComponent,
+    ShowQuizAttemptsComponent
   ],
   imports: [
     BrowserModule,
