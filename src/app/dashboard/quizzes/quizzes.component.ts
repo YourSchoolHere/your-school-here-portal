@@ -218,6 +218,14 @@ export class QuizzesComponent {
     .catch(console.warn);
   }
 
+  canStudentAttemptQuiz(quiz: any) {
+    return quiz['attempts_count'] < quiz['max_attempts'] && Date.now() < quiz['endingAt'];
+  }
+
+  canTeacherEditQuiz(quiz: any) {
+    return Date.now() < quiz['startingAt'];
+  }
+
   showQuiz(quiz_id: number) {
     this.questions = [];
     this.quiz_id = quiz_id;

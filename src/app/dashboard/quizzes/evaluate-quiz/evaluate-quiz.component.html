@@ -1,4 +1,4 @@
-<div>Quiz attempted by {{quizDetails.student_id}} and submitted at {{quizDetails.created_at}}</div>
+<div style="padding-left: 10px;">Quiz attempted by {{quizDetails.student_id}} and submitted at {{quizDetails.created_at}}</div>
 <div *ngFor="let qs of questions, let i = index" class="qs-card">
   <div class="qs-title">Question: {{qs.question}}</div>
   <div *ngIf="qs.type == 'sa'">
@@ -39,7 +39,7 @@
     <div>{{qs.marks}}</div>
   </div>
 </div>
-<div style="margin-top: 10px;">Total marks: {{getTotalMarksGained()}} / {{quizDetails.marks}}</div>
+<div style="margin-top: 10px; padding-left: 10px;">Total marks: {{getTotalMarksGained()}} / {{quizDetails.marks}}</div>
 <div *ngIf="user.mode=='teacher'" style="margin-top: 10px;">
   <button class="primary" (click)="updateMarks()">Update Marks</button>
 </div>

@@ -24,7 +24,7 @@ export class EvaluateQuizComponent implements OnChanges {
       console.log(this.quizDetails.json);
       for(let i=0; this.quizDetails.json[i]; i++) {
         this.questions.push(this.quizDetails.json[i]);
-        this.marksArray.push(new FormControl(String(this.quizDetails.json[i].marksGained), [Validators.required, Validators.pattern("^(0 | [1-9][0-9]*)(\.[0-9]+)?$")]));
+        this.marksArray.push(new FormControl(String(this.quizDetails.json[i].marksGained)));
       }
     }).catch(console.warn);
   }
@@ -33,7 +33,8 @@ export class EvaluateQuizComponent implements OnChanges {
     let totalMarksGained = 0;
     for(let i=0; i<this.marksArray.length; i++) {
       let marks = Number(this.marksArray[i].value);
-      if(isNaN(this.marksArray[i].value) || marks > this.questions[i].marks) {
+      if(!/^(0|[1-9][0-9]*)(\.[0-9]+)?$/.test(this.marksArray[i].value) || marks > this.questions[i].marks) {
+        console.log(i, this.marksArray[i].value, !/^(0 | [1-9][0-9]*)(\.[0-9]+)?$/.test(this.marksArray[i].value))
         return "N/A";
       }
       totalMarksGained += marks;
@@ -45,7 +46,7 @@ export class EvaluateQuizComponent implements OnChanges {
     let totalMarksGained = this.getTotalMarksGained();
     if(totalMarksGained == "N/A") return;
     for(let i=0; i<this.questions.length; i++) {
-      this.quizDetails.json[i].marksGained = this.marksArray[i].value;
+      this.quizDetails.json[i].marksGained = Number(this.marksArray[i].value);
     }
     this.quizDetails.marks_gained = totalMarksGained;
     this.http.post(`/update-quiz-marks?atmpt_id=${this.atmptId}`, {marks_gained: this.quizDetails.marks_gained, json: this.quizDetails.json}, {headers: {token: window.localStorage.getItem("token") || ""}})
