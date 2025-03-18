@@ -10,6 +10,13 @@
   padding: 10px;
 }
 
+.disabled-text {
+  font-size: 13.3333px;
+  color: gray;
+  margin-right: 5px;
+  height: fit-content;
+}
+
 .quiz-form {
   padding: 0 10px;
   & > div {

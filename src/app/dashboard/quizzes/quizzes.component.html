@@ -17,7 +17,22 @@
       <div *ngFor="let quiz of quizzes" class="quiz-card">
         <div class="title">{{quiz.title}}</div>
         <div class="quiz-actions">
-          <button class="no-bkgrnd" (click)="showQuiz(quiz['quiz_id'])">{{user.mode == "teacher" ? "Edit Quiz" : "Start Quiz"}}</button>
+          <div *ngIf="user.mode == 'student'">
+            <div *ngIf="canStudentAttemptQuiz(quiz); else cannotAttemptQuiz">
+              <button class="no-bkgrnd" (click)="showQuiz(quiz['quiz_id'])">Start Quiz</button>
+            </div>
+            <ng-template #cannotAttemptQuiz>
+              <div class="disabled-text">Unable to start this quiz</div>
+            </ng-template>
+          </div>
+          <div *ngIf="user.mode == 'teacher'">
+            <div *ngIf="canTeacherEditQuiz(quiz); else cannotEditQuiz">
+              <button class="no-bkgrnd" (click)="showQuiz(quiz['quiz_id'])">Edit Quiz</button>
+            </div>
+            <ng-template #cannotEditQuiz>
+              <div class="disabled-text">Cannot edit this quiz</div>
+            </ng-template>
+          </div>
           <button class="no-bkgrnd" (click)="showAttemptsForQuiz(quiz['quiz_id'])">Show Quiz Attempts</button>
         </div>
       </div>
