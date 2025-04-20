@@ -6,12 +6,12 @@
     <div>
       <input type="password" placeholder="Password" [formControl]="password" />
     </div>
-    <button (click)="login()">Login</button>
+    <button class="primary" (click)="login()">Login</button>
     <div style="display: flex; align-items: center;">
       <div style="flex-grow: 1;"><hr /></div>
       <div style="padding: 5px;">OR</div>
       <div style="flex-grow: 1;"><hr /></div>
     </div>
-    <button style="width: 100%;" (click)="loginWithSSO()">Login with Sheridan SSO</button>
+    <button class="primary" style="width: 100%;" (click)="loginWithSSO()">Login with Sheridan SSO</button>
   </div>
 </div>

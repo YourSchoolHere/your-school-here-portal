@@ -30,6 +30,6 @@ export class LoginComponent {
   }
 
   loginWithSSO() {
-    this.router.navigateByUrl('/dashboard');
+    // code to login via college sso
   }
 }

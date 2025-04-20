@@ -60,8 +60,8 @@ export class QuizzesComponent {
   }
 
   dtChanged(ev: any, mode: "start" | "end") {
-    if(mode == "start") this.startDt = ev.value;
-    else this.endDt = ev.value;
+    if(mode == "start") this.startDt = new Date(ev.target.value);
+    else this.endDt = new Date(ev.target.value);
   }
 
   refreshQuizList() {
