@@ -21,14 +21,18 @@
         <div style="width: 20%;">
           <div class="tab-links" (click)="gotoSection('contents')">Contents</div>
           <div class="tab-links" (click)="gotoSection('quizzes')">Quizzes</div>
+          <div class="tab-links" (click)="gotoSection('announcements')">Announcements</div>
         </div>
         <div style="width: 80%;">
-          <div *ngIf="subSection=='contents'">
-            Contents
-          </div>
-          <div *ngIf="subSection=='quizzes'">
+          <ng-container *ngIf="subSection=='contents'">
+            <app-contents></app-contents>
+          </ng-container>
+          <ng-container *ngIf="subSection=='quizzes'">
             <app-quizzes></app-quizzes>
-          </div>
+          </ng-container>
+          <ng-container *ngIf="subSection=='announcements'">
+            <app-announcements></app-announcements>
+          </ng-container>
         </div>
       </div>
     </div>

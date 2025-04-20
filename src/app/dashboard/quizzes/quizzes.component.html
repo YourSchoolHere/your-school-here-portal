@@ -116,18 +116,16 @@
         </div>
         <div *ngIf="user.mode=='teacher' && !isStudentModeActive && !canAttemptRightNow" >
           <div>Starts from:</div>
-          <div>
-            <input [ngModel]="startDt" [owlDateTime]="dt1" (dateTimeInput)="dtChanged($event, 'start')" placeholder="Date Time">
-            <span [owlDateTimeTrigger]="dt1"><i class="fa fa-calendar"></i></span>
-            <owl-date-time #dt1></owl-date-time>
+          <div class="datetime-picker">
+            <div class="dt-display"></div>
+            <input type="datetime-local" [ngModel]="startDt | yshDate" (input)="dtChanged($event, 'start')" />
           </div>
         </div>
         <div *ngIf="user.mode=='teacher' && !isStudentModeActive" >
           <div>Ends at:</div>
-          <div>
-            <input [ngModel]="endDt" [owlDateTime]="dt2" (dateTimeInput)="dtChanged($event, 'end')" placeholder="Date Time">
-            <span [owlDateTimeTrigger]="dt2"><i class="fa fa-calendar"></i></span>
-            <owl-date-time #dt2></owl-date-time>
+          <div class="datetime-picker">
+            <div class="dt-display"></div>
+            <input type="datetime-local" [ngModel]="endDt | yshDate" (input)="dtChanged($event, 'end')" />
           </div>
         </div>
         <div *ngIf="user.mode=='teacher' && !isStudentModeActive">

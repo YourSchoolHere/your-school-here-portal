@@ -13,10 +13,13 @@ import { CodeEditorComponent } from './dashboard/quizzes/code-editor/code-editor
 import { CodeEditorModule, provideCodeEditor } from '@ngstack/code-editor';
 import { DiagramComponent } from './dashboard/quizzes/diagram/diagram.component';
 import { DiagramModule } from '@syncfusion/ej2-angular-diagrams';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@danielmoncada/angular-datetime-picker';
+import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EvaluateQuizComponent } from './dashboard/quizzes/evaluate-quiz/evaluate-quiz.component';
 import { ShowQuizAttemptsComponent } from './dashboard/quizzes/show-quiz-attempts/show-quiz-attempts.component';
+import { ContentsComponent } from './dashboard/contents/contents.component';
+import { AnnouncementsComponent } from './dashboard/announcements/announcements.component';
+import { YshDatePipe } from './pipes/ysh-date.pipe';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,10 @@ import { ShowQuizAttemptsComponent } from './dashboard/quizzes/show-quiz-attempt
     CodeEditorComponent,
     DiagramComponent,
     EvaluateQuizComponent,
-    ShowQuizAttemptsComponent
+    ShowQuizAttemptsComponent,
+    ContentsComponent,
+    AnnouncementsComponent,
+    YshDatePipe
   ],
   imports: [
     BrowserModule,
@@ -37,8 +43,8 @@ import { ShowQuizAttemptsComponent } from './dashboard/quizzes/show-quiz-attempt
     ReactiveFormsModule,
     CodeEditorModule.forRoot(),
     DiagramModule,
-    OwlDateTimeModule,
-    OwlNativeDateTimeModule
+    FroalaEditorModule.forRoot(),
+    FroalaViewModule.forRoot()
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
