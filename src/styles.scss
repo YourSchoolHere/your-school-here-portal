@@ -14,6 +14,16 @@ body {
 .full-width-height {
   height: 100%;
   width: 100%;
+  box-sizing: border-box;
+}
+
+.header {
+  padding: 10px;
+  width: calc(100% - 20px);
+  min-height: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .center-div-container {

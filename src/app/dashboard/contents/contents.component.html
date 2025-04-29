@@ -1,1 +1,66 @@
-<p>contents works!</p>
+<div class="full-width-height">
+  <div class="header">
+    <div>Contents</div>
+  </div>
+  <div style="padding: 0 10px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <div>
+        <select [(ngModel)]="selectedSectionId" (ngModelChange)="loadContents()">
+          <option *ngIf="!selectedSectionId" value="">Select a section...</option>
+          <option *ngFor="let obj of sections" [value]="obj.id">{{obj.title}}</option>
+        </select>
+      </div>
+      <button class="primary" *ngIf="user.mode == 'teacher'" (click)="newSection.show()">Create New Section</button>
+      <app-modal #newSection>
+        <label for="title">Title for new section</label>
+        <input [(ngModel)]="newSectionTitle" name="title" />
+        <div style="margin: 8px 0;">
+          <input [(ngModel)]="releaseToStudentsNow" type="checkbox" style="margin-left: 0;" /> Release to students now
+        </div>
+        <div class="buttons-container">
+          <button class="primary" (click)="createNewSection(); newSection.hide()">Create Section</button>
+          <button class="danger" (click)="newSection.hide()">Cancel</button>
+        </div>
+      </app-modal>
+    </div>
+    <ng-container *ngIf="selectedSectionId">
+      <div *ngIf="user.mode == 'teacher'" style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+        <button class="primary" (click)="newContent.show()">Create New Content</button>
+        <app-modal #newContent>
+          <label for="title">Title for new content</label>
+          <input [(ngModel)]="newContentTitle" name="title" />
+          <div style="display: flex; margin: 8px 0;">
+            <div>Resource Type:</div>
+            <div><input [(ngModel)]="newContentType" type="radio" style="margin-left: 30px;" value="link" /> Link</div>
+            <div><input [(ngModel)]="newContentType" type="radio" style="margin-left: 30px;" value="file" /> File</div>
+          </div>
+          <ng-container *ngIf="newContentType == 'link'; else fileUploadInput">
+            <label for="resource_link">Resource Link</label>
+            <input [(ngModel)]="newContentResourceLink" name="resource_link" />
+          </ng-container>
+          <ng-template #fileUploadInput>
+            <label for="file_input">Upload File</label>
+            <input type="file" (change)="onFileSelected($event)" name="file_input" accept=".pdf, .doc, .docx, .ppt, .pptx, .rtf" />
+            <div>(accepted file types: .pdf, .doc, .docx, .ppt, .pptx, .rtf)</div>
+          </ng-template>
+          <div style="margin: 8px 0;">
+            <input [(ngModel)]="releaseToStudentsNow" type="checkbox" style="margin-left: 0;" /> Release to students now
+          </div>
+          <div class="buttons-container">
+            <button class="primary" (click)="createNewContent(newContent)">Create Content</button>
+            <button class="danger" (click)="newContent.hide()">Cancel</button>
+          </div>
+        </app-modal>
+      </div>
+      <ng-container *ngIf="contents[selectedSectionId]">
+        <div *ngFor="let item of contents[selectedSectionId].list; let idx = index">
+          <hr *ngIf="!idx" />
+          <div class="content-box">
+            <div class="content-title" (click)="viewResource(item)" target="_blank">{{item.title}}</div>
+          </div>
+        </div>
+        <app-doc-viewer *ngIf="docViewerUrl" [resourceUrl]="docViewerUrl" style="width: 100%;"></app-doc-viewer>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

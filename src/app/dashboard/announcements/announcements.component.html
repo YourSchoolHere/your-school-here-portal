@@ -1,13 +1,14 @@
-<div style="padding: 0 10px;">
-  <ng-container *ngIf="user.mode == 'teacher'">
-    <h3>Create new announcement</h3>
-    <!-- <div id="announcements-editor" style=" position: relative;">
-      <froala-editor [froalaEditor]="froalaConfig" [(ngModel)]="html"></froala-editor>
-    </div> -->
-    <div id="announcements-editor" [froalaEditor]="froalaConfig" [(froalaModel)]="html"></div>
-    <button class="primary" (click)="createAnnouncement()">Create New Announcement</button>
-  </ng-container>
-  <div *ngFor="let annm of announcements">
-    <div [innerHTML]="annm.html"></div>
+<div class="full-width-height">
+  <div class="header">
+    <div>Announcements</div>
+  </div>
+  <div style="padding: 0 10px; box-sizing: border-box;">
+    <ng-container *ngIf="user.mode == 'teacher'">
+      <div id="announcements-editor" [froalaEditor]="froalaConfig" [(froalaModel)]="html"></div>
+      <button class="primary" (click)="createAnnouncement()">Create New Announcement</button>
+    </ng-container>
+    <div *ngFor="let annm of announcements">
+      <div [innerHTML]="annm.html"></div>
+    </div>
   </div>
 </div>

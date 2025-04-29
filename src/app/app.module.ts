@@ -20,6 +20,10 @@ import { ShowQuizAttemptsComponent } from './dashboard/quizzes/show-quiz-attempt
 import { ContentsComponent } from './dashboard/contents/contents.component';
 import { AnnouncementsComponent } from './dashboard/announcements/announcements.component';
 import { YshDatePipe } from './pipes/ysh-date.pipe';
+import { ModalComponent } from './common/modal/modal.component';
+import { DocViewerComponent } from './common/doc-viewer/doc-viewer.component';
+import { SupabaseService } from './services/supabase.service';
+import { HttpService } from './services/http.service';
 
 @NgModule({
   declarations: [
@@ -33,7 +37,9 @@ import { YshDatePipe } from './pipes/ysh-date.pipe';
     ShowQuizAttemptsComponent,
     ContentsComponent,
     AnnouncementsComponent,
-    YshDatePipe
+    YshDatePipe,
+    ModalComponent,
+    DocViewerComponent
   ],
   imports: [
     BrowserModule,
@@ -48,7 +54,9 @@ import { YshDatePipe } from './pipes/ysh-date.pipe';
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
-    UserService
+    UserService,
+    SupabaseService,
+    HttpService
   ],
   bootstrap: [AppComponent]
 })
