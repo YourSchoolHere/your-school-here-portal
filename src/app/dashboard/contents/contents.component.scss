@@ -1,0 +1,26 @@
+.content-box {
+  margin: 10px 0;
+  .content-title {
+    display: block;
+    text-decoration: none;
+    color: black;
+    font-size: 21px;
+    cursor: pointer;
+    &:hover {
+      color: #2e8cbf;
+      text-decoration: underline solid #2e8cbf;
+    }
+  }
+}
+
+.buttons-container {
+  display: flex;
+  align-items: center;
+  & > button:not(:last-of-type) {
+    margin-right: 10px;
+  }
+}
+
+label {
+  margin-right: 30px;
+}
